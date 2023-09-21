@@ -77,7 +77,7 @@ CLASS zcl_abapgit_user_exit IMPLEMENTATION.
       WHEN actions-launch_standalone.
         program = ii_event->query( )->get( 'program' ).
         repo_key = ii_event->query( )->get( 'repo' ).
-        IF program IS INITIAL OR repo_key IS INITIAL.
+        IF program IS INITIAL OR repo_key IS INITIAL OR program NP 'ZABAPGIT_STANDALONE*'.
           zcx_abapgit_exception=>raise( |Unknown jump location for { ii_event->mv_action }| ).
         ENDIF.
 
@@ -94,7 +94,7 @@ CLASS zcl_abapgit_user_exit IMPLEMENTATION.
       RETURN.
     ENDIF.
 
-    repo_key = ii_event->query( )->get( 'key' ).
+    repo_key = EXACT #( ii_event->query( )->get( 'key' ) ).
     DATA(repo) = zcl_abapgit_repo_srv=>get_instance( )->get( EXACT #( repo_key ) ).
     IF repo->is_offline( ).
       RETURN.
